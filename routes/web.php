@@ -32,4 +32,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/book', [BookingController::class, 'store']);
     Route::get('/bookings', [BookingController::class, 'index']);
     Route::post('/bookings/{id}/pay', [BookingController::class, 'payDeposit']);
+    Route::post('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
 });

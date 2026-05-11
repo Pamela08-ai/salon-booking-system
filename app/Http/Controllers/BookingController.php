@@ -43,4 +43,13 @@ class BookingController extends Controller
 
         return redirect('/bookings');
     }
+    
+    public function cancel($id)
+    {
+        $booking = Booking::findOrFail($id);
+        $booking->status = 'cancelled';
+        $booking->save();
+
+        return redirect('/bookings');
+    }
 }

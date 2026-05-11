@@ -32,13 +32,26 @@
                 <td>£{{ $booking->deposit_amount }}</td>
                 <td>{{ $booking->deposit_paid ? 'Yes' : 'No' }}</td>
                 <td>
-                    @if(!$booking->deposit_paid)
-                        <form method="POST" action="{{ url('/bookings/' . $booking->id . '/pay') }}">
+                    @if($booking->status !== 'cancelled')
+
+                        @if(!$booking->deposit_paid)
+                            <form method="POST" action="{{ url('/bookings/' . $booking->id . '/pay') }}">
+                                @csrf
+                                <button type="submit">Pay Deposit</button>
+                            </form>
+                        @else
+                            Paid
+                        @endif
+
+                        <br>
+
+                        <form method="POST" action="{{ url('/bookings/' . $booking->id . '/cancel') }}">
                             @csrf
-                            <button type="submit">Pay Deposit</button>
+                            <button type="submit">Cancel Booking</button>
                         </form>
+
                     @else
-                        Paid
+                        Cancelled
                     @endif
                 </td>
             </tr>
