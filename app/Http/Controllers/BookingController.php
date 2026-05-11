@@ -52,6 +52,7 @@ class BookingController extends Controller
 
         return redirect('/bookings');
     }
+    
     public function dashboard()
     {
         $totalBookings = Booking::count();
@@ -59,11 +60,19 @@ class BookingController extends Controller
         $pendingBookings = Booking::where('status', 'pending')->count();
         $cancelledBookings = Booking::where('status', 'cancelled')->count();
 
+        $popularService = Booking::select('service_id')
+            ->selectRaw('count(*) as total')
+            ->groupBy('service_id')
+            ->orderByDesc('total')
+            ->with('service')
+            ->first();
+
         return view('dashboard', compact(
             'totalBookings',
             'totalRevenue',
             'pendingBookings',
-            'cancelledBookings'
+            'cancelledBookings',
+            'popularService'
         ));
     }
 }

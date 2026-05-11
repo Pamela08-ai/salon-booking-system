@@ -20,6 +20,37 @@
                     <h3>Pending Bookings: {{ $pendingBookings }}</h3>
                     <h3>Cancelled Bookings: {{ $cancelledBookings }}</h3>
 
+                    <br><br>
+
+                    @if($popularService)
+                        <h3>Most Popular Service: {{ $popularService->service->name }}</h3>
+                    @else
+                        <h3>No bookings yet</h3>
+                    @endif
+                    
+                    <br><br>
+                    <canvas id="bookingChart" width="400" height="200"></canvas>
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+                    <script>
+                        const ctx = document.getElementById('bookingChart').getContext('2d');
+
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Total', 'Pending', 'Cancelled'],
+                                datasets: [{
+                                    label: 'Bookings Overview',
+                                    data: [
+                                        {{ $totalBookings }},
+                                        {{ $pendingBookings }},
+                                        {{ $cancelledBookings }}
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            }
+                        });
+                    </script>
                 </div>
             </div>
 
