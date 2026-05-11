@@ -43,7 +43,7 @@ class BookingController extends Controller
 
         return redirect('/bookings');
     }
-    
+
     public function cancel($id)
     {
         $booking = Booking::findOrFail($id);
@@ -51,5 +51,19 @@ class BookingController extends Controller
         $booking->save();
 
         return redirect('/bookings');
+    }
+    public function dashboard()
+    {
+        $totalBookings = Booking::count();
+        $totalRevenue = Booking::where('deposit_paid', true)->sum('deposit_amount');
+        $pendingBookings = Booking::where('status', 'pending')->count();
+        $cancelledBookings = Booking::where('status', 'cancelled')->count();
+
+        return view('dashboard', compact(
+            'totalBookings',
+            'totalRevenue',
+            'pendingBookings',
+            'cancelledBookings'
+        ));
     }
 }
