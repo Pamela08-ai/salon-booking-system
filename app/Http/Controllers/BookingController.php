@@ -30,6 +30,7 @@ class BookingController extends Controller
             'status' => 'pending',
             'deposit_amount' => 20,
             'deposit_paid' => false,
+            'staff_name' => $request->staff_name,
         ]);
 
         return redirect('/services');
@@ -52,7 +53,7 @@ class BookingController extends Controller
 
         return redirect('/bookings');
     }
-    
+
     public function dashboard()
     {
         $totalBookings = Booking::count();

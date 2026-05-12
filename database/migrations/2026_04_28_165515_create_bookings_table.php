@@ -22,6 +22,7 @@ return new class extends Migration
     	    $table->boolean('deposit_paid')->default(false);
     	    $table->text('notes')->nullable();
             $table->timestamps();
+            $table->string('staff_name')->nullable();
         });
     }
 

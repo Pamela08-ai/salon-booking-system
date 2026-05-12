@@ -12,6 +12,7 @@ class Booking extends Model
         'service_id',
         'booking_date',
         'booking_time',
+        'staff_name',
         'status',
         'deposit_amount',
         'deposit_paid',

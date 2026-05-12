@@ -17,6 +17,7 @@
             <th>Service</th>
             <th>Date</th>
             <th>Time</th>
+            <th>Staff</th>
             <th>Status</th>
             <th>Deposit Amount</th>
             <th>Deposit Paid</th>
@@ -28,6 +29,7 @@
                 <td>{{ $booking->service->name }}</td>
                 <td>{{ $booking->booking_date }}</td>
                 <td>{{ $booking->booking_time }}</td>
+                <td>{{ $booking->staff_name }}</td>
                 <td>{{ $booking->status }}</td>
                 <td>£{{ $booking->deposit_amount }}</td>
                 <td>{{ $booking->deposit_paid ? 'Yes' : 'No' }}</td>
