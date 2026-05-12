@@ -33,7 +33,8 @@ class BookingController extends Controller
             'staff_name' => $request->staff_name,
         ]);
 
-        return redirect('/services');
+        return redirect('/my-bookings')
+            ->with('success', 'Appointment booked succesfully.');
     }
 
     public function payDeposit($id)
@@ -42,7 +43,7 @@ class BookingController extends Controller
         $booking->deposit_paid = true;
         $booking->save();
 
-        return redirect('/bookings');
+        return back()->with('success', 'Deposit paid successfully.');
     }
 
     public function cancel($id)
@@ -51,7 +52,7 @@ class BookingController extends Controller
         $booking->status = 'cancelled';
         $booking->save();
 
-        return redirect('/bookings');
+        return back()->with('success', 'Booking cancelled successfully.');
     }
 
     public function dashboard()
@@ -75,5 +76,13 @@ class BookingController extends Controller
             'cancelledBookings',
             'popularService'
         ));
+    }
+    public function myBookings()
+    {
+        $bookings = Booking::with('service')
+            ->where('user_id', Auth::id())
+            ->get();
+
+        return view('bookings.my-bookings', compact('bookings'));
     }
 }

@@ -14,13 +14,13 @@
 <h2>Select Your Portal</h2>
 
 <a href="/services">
-    <button>Customer: Book a Service</button>
+    <button>Customer Portal</button>
 </a>
 
 <br><br>
 
 <a href="/dashboard">
-    <button>Business Owner: Dashboard</button>
+    <button>Business Owner Portal</button>
 </a>
 
 <br><br>
