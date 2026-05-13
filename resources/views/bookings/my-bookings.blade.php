@@ -5,7 +5,7 @@
 </head>
 <body>
 
-<h1>My Bookings</h1>
+<h1>My Appointments</h1>
 
 <p>
     <a href="/">Home</a> |
@@ -21,11 +21,14 @@
     <table border="1" cellpadding="10">
         <tr>
             <th>Service</th>
+            <th>Business</th>
             <th>Date</th>
             <th>Time</th>
             <th>Staff</th>
             <th>Status</th>
             <th>Deposit Status</th>
+            <th>Reminder Status</th>
+            <th>Reminder Action</th>
             <th>Deposit Action</th>
             <th>Booking Action</th>
         </tr>
@@ -33,12 +36,28 @@
         @foreach($bookings as $booking)
             <tr>
                 <td>{{ $booking->service->name }}</td>
+                <td>{{ $booking->service->business->business_name }}</td>
                 <td>{{ $booking->booking_date }}</td>
                 <td>{{ $booking->booking_time }}</td>
                 <td>{{ $booking->staff_name }}</td>
                 <td>{{ $booking->status }}</td>
                 <td>{{ $booking->deposit_paid ? 'Paid' : 'Not Paid' }}</td>
-                
+
+                <td>
+                    {{ $booking->reminder_sent ? 'Sent' : 'Not Sent' }}
+                </td>
+
+                <td>
+                    @if(!$booking->reminder_sent && $booking->status !== 'cancelled')
+                        <form method="POST" action="{{ url('/bookings/' . $booking->id . '/reminder') }}">
+                            @csrf
+                            <button type="submit">Send Reminder</button>
+                        </form>
+                    @else
+                        Not available
+                    @endif
+                </td>
+
                 <td>
                     @if($booking->status === 'cancelled')
                         Not available
@@ -51,7 +70,7 @@
                         Paid
                     @endif
                 </td>
-                
+
                 <td>
                     @if($booking->status !== 'cancelled')
                         <form method="POST" action="{{ url('/bookings/' . $booking->id . '/cancel') }}">
@@ -66,7 +85,7 @@
         @endforeach
     </table>
 @else
-    <p>You have no bookings yet.</p>
+    <p>You have no appointments yet.</p>
 @endif
 
 </body>

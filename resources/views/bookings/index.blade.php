@@ -5,7 +5,7 @@
 </head>
 <body>
 
-<h1>All Bookings</h1>
+<h1>Business Owner - Booking Management</h1>
 
 <a href="/services">Back to Services</a>
 

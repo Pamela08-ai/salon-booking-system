@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\BusinessController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,6 +27,8 @@ require __DIR__.'/auth.php';
 Route::get('/services', [ServiceController::class, 'index']);
 Route::get('/services/create', [ServiceController::class, 'create']);
 Route::post('/services', [ServiceController::class, 'store']);
+Route::get('/businesses', [BusinessController::class, 'index']);
+Route::get('/businesses/{business}', [BusinessController::class, 'show']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/book/{service}', [BookingController::class, 'create']);
@@ -34,4 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-bookings', [BookingController::class, 'myBookings']);
     Route::post('/bookings/{id}/pay', [BookingController::class, 'payDeposit']);
     Route::post('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
+    Route::post('/bookings/{id}/reminder', [BookingController::class, 'sendReminder']);
+    Route::get('/business/create', [BusinessController::class, 'create']);
+    Route::post('/business', [BusinessController::class, 'store']);
+    Route::get('/business/profile', [BusinessController::class, 'profile']);
 });

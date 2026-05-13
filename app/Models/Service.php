@@ -7,10 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class Service extends Model
 {
     protected $fillable = [
-    'name',
-    'description',
-    'price',
-    'duration',
-    'is_active',
+        'business_id',
+        'name',
+        'description',
+        'price',
+        'duration',
+        'is_active',
     ];
+
+
+    public function business()
+    {
+        return $this->belongsTo(Business::class);
+    }
 }
+
+

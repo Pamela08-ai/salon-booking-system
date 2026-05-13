@@ -11,7 +11,19 @@ class BookingController extends Controller
 {
     public function index()
     {
-        $bookings = Booking::with('service')->get();
+        $business = \App\Models\Business::where('user_id', Auth::id())->first();
+
+        if (!$business) {
+            return redirect('/business/create')
+                ->with('success', 'Please create a business profile first.');
+        }
+
+        $bookings = Booking::with('service')
+            ->whereHas('service', function ($query) use ($business) {
+                $query->where('business_id', $business->id);
+            })
+            ->get();
+
         return view('bookings.index', compact('bookings'));
     }
 
@@ -33,8 +45,12 @@ class BookingController extends Controller
             'staff_name' => $request->staff_name,
         ]);
 
+        $businessName = Service::find($request->service_id)
+            ->business
+            ->business_name;
+
         return redirect('/my-bookings')
-            ->with('success', 'Appointment booked succesfully.');
+            ->with('success', 'Appointment booked successfully with ' . $businessName . '.');
     }
 
     public function payDeposit($id)
@@ -44,6 +60,16 @@ class BookingController extends Controller
         $booking->save();
 
         return back()->with('success', 'Deposit paid successfully.');
+    }
+    public function sendReminder($id)
+    {
+        $booking = Booking::findOrFail($id);
+
+        $booking->reminder_sent = true;
+
+        $booking->save();
+
+        return back()->with('success', 'Reminder marked as sent.');
     }
 
     public function cancel($id)
@@ -57,24 +83,82 @@ class BookingController extends Controller
 
     public function dashboard()
     {
-        $totalBookings = Booking::count();
-        $totalRevenue = Booking::where('deposit_paid', true)->sum('deposit_amount');
-        $pendingBookings = Booking::where('status', 'pending')->count();
-        $cancelledBookings = Booking::where('status', 'cancelled')->count();
+        $business = \App\Models\Business::where('user_id', Auth::id())->first();
+
+        if (!$business) {
+            return view('dashboard', [
+                'business' => null,
+                'totalBookings' => 0,
+                'totalRevenue' => 0,
+                'pendingBookings' => 0,
+                'cancelledBookings' => 0,
+                'popularService' => null,
+                'totalUnpaidDeposits' => 0,
+                'mostBookedStaff' => null,
+                'cancellationRate' => 0,
+            ]);
+        }
+
+        $totalBookings = Booking::whereHas('service', function ($query) use ($business) {
+            $query->where('business_id', $business->id);
+        })->count();
+
+        $totalRevenue = Booking::where('deposit_paid', true)
+            ->whereHas('service', function ($query) use ($business) {
+                $query->where('business_id', $business->id);
+            })->sum('deposit_amount');
+
+        $pendingBookings = Booking::where('status', 'pending')
+            ->whereHas('service', function ($query) use ($business) {
+                $query->where('business_id', $business->id);
+            })->count();
+
+        $cancelledBookings = Booking::where('status', 'cancelled')
+            ->whereHas('service', function ($query) use ($business) {
+                $query->where('business_id', $business->id);
+            })->count();
 
         $popularService = Booking::select('service_id')
             ->selectRaw('count(*) as total')
+            ->whereHas('service', function ($query) use ($business) {
+                $query->where('business_id', $business->id);
+            })
             ->groupBy('service_id')
             ->orderByDesc('total')
             ->with('service')
             ->first();
 
+        $totalUnpaidDeposits = Booking::where('deposit_paid', false)
+            ->where('status', '!=', 'cancelled')
+            ->whereHas('service', function ($query) use ($business) {
+                $query->where('business_id', $business->id);
+            })
+            ->count();
+
+        $mostBookedStaff = Booking::select('staff_name')
+            ->selectRaw('count(*) as total')
+            ->whereNotNull('staff_name')
+            ->whereHas('service', function ($query) use ($business) {
+                $query->where('business_id', $business->id);
+            })
+            ->groupBy('staff_name')
+            ->orderByDesc('total')
+            ->first();
+
+        $cancellationRate = $totalBookings > 0
+            ? round(($cancelledBookings / $totalBookings) * 100, 1)
+            : 0;
+
         return view('dashboard', compact(
+            'business',
             'totalBookings',
             'totalRevenue',
             'pendingBookings',
             'cancelledBookings',
-            'popularService'
+            'popularService',
+            'totalUnpaidDeposits',
+            'mostBookedStaff',
+            'cancellationRate'
         ));
     }
     public function myBookings()
@@ -85,4 +169,5 @@ class BookingController extends Controller
 
         return view('bookings.my-bookings', compact('bookings'));
     }
+
 }

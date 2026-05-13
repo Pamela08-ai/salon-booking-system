@@ -1,32 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bookira | Salon Booking Platform</title>
+    <title>Bookira</title>
 </head>
 <body>
 
-<h1>Welcome to Bookira</h1>
+    <h1>Welcome to Bookira</h1>
 
-<p>
-    Book appointments, manage schedules, and streamline salon operations.
-</p>
+    <p>
+        Smart salon booking and business management platform.
+    </p>
 
-<h2>Select Your Portal</h2>
+    <hr><br>
 
-<a href="/services">
-    <button>Customer Portal</button>
-</a>
+    <h2>Customer Portal</h2>
 
-<br><br>
+    <p>
+        Browse salon businesses and book appointments.
+    </p>
 
-<a href="/dashboard">
-    <button>Business Owner Portal</button>
-</a>
+    <a href="/businesses">
+        <button>Book Appointment</button>
+    </a>
 
-<br><br>
+    <br><br><hr><br>
 
-<a href="/login">Login</a> |
-<a href="/register">Register</a>
+    <h2>Business Owner Portal</h2>
+
+    <p>
+        Manage your salon business, services, and bookings.
+    </p>
+
+    @guest
+
+    <a href="/register">
+        <button>Register Your Business</button>
+    </a>
+
+    <br><br>
+
+    <a href="/login">
+        <button>Business Owner Login</button>
+    </a>
+
+@else
+
+    <a href="/business/create">
+        <button>Create Business Profile</button>
+    </a>
+
+    <br><br>
+
+    <a href="/business/profile">
+        <button>My Business Profile</button>
+    </a>
+
+    <br><br>
+
+    <a href="/dashboard">
+        <button>Business Dashboard</button>
+    </a>
+
+@endguest
+
+    <br><br><hr><br>
+
+    @guest
+
+        <a href="/login">Login</a> |
+        <a href="/register">Register</a>
+
+    @else
+
+        <p>
+            Logged in as {{ Auth::user()->name }}
+        </p>
+
+        <a href="/my-bookings">
+            My Bookings
+        </a>
+
+    @endguest
 
 </body>
 </html>
