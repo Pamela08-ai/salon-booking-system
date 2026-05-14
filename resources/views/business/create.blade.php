@@ -5,6 +5,8 @@
 </head>
 <body>
 
+@include('partials.nav')
+
 <h1>Create Your Business Profile</h1>
 
 <form method="POST" action="/business">

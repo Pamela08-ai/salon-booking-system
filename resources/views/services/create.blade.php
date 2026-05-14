@@ -5,6 +5,8 @@
 </head>
 <body>
 
+@include('partials.nav')
+
 <h1>Add Service</h1>
 
 <form action="/services" method="POST">

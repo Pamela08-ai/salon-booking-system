@@ -5,6 +5,8 @@
 </head>
 <body>
 
+@include('partials.nav')
+
 <h1>Book {{ $service->name }}</h1>
 
 <p>Price: £{{ $service->price }}</p>

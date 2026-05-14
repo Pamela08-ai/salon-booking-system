@@ -5,6 +5,8 @@
 </head>
 <body>
 
+@include('partials.nav')
+
 <h1>Business Owner - Booking Management</h1>
 
 <a href="/services">Back to Services</a>
@@ -14,6 +16,8 @@
 @if($bookings->count() > 0)
     <table border="1" cellpadding="10">
         <tr>
+            <th>Customer</th>
+            <th>Email</th>
             <th>Service</th>
             <th>Date</th>
             <th>Time</th>
@@ -26,6 +30,8 @@
 
         @foreach($bookings as $booking)
             <tr>
+                <td>{{ $booking->user->name }}</td>
+                <td>{{ $booking->user->email }}</td>
                 <td>{{ $booking->service->name }}</td>
                 <td>{{ $booking->booking_date }}</td>
                 <td>{{ $booking->booking_time }}</td>
@@ -51,7 +57,7 @@
                             @csrf
                             <button type="submit">Cancel Booking</button>
                         </form>
-
+                        
                     @else
                         Cancelled
                     @endif

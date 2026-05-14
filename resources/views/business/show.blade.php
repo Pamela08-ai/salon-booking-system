@@ -5,6 +5,8 @@
 </head>
 <body>
 
+@include('partials.nav')
+
 <h1>{{ $business->business_name }}</h1>
 
 <p>

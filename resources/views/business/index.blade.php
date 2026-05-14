@@ -5,6 +5,8 @@
 </head>
 <body>
 
+@include('partials.nav')
+
 <h1>Browse Salon Businesses</h1>
 
 <p>

@@ -5,6 +5,8 @@
 </head>
 <body>
 
+@include('partials.nav')
+
     <h1>Welcome to Bookira</h1>
 
     <p>
