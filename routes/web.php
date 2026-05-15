@@ -5,15 +5,52 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\BusinessController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
+    if (Auth::check()) {
+        if (Auth::user()->role === 'business_owner') {
+            return redirect('/business/profile');
+        }
+
+        if (Auth::user()->role === 'customer') {
+            return redirect('/businesses');
+        }
+    }
+
     return view('welcome');
 });
 
-Route::get('/dashboard', [BookingController::class, 'dashboard'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+//Public customer browsing
+Route::get('/businesses', [BusinessController::class, 'index']);
+Route::get('/businesses/{business}', [BusinessController::class, 'show']);
 
+//Customer booking routes
+Route::middleware('auth')->group(function () {
+    Route::get('/book/{service}', [BookingController::class, 'create']);
+    Route::post('/book', [BookingController::class, 'store']);
+    Route::get('/my-bookings', [BookingController::class, 'myBookings']);
+    Route::post('/bookings/{id}/pay', [BookingController::class, 'payDeposit']);
+    Route::post('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
+});
+
+//Business owner routes
+Route::middleware(['auth', 'business_owner'])->group(function () {
+    Route::get('/dashboard', [BookingController::class, 'dashboard'])->name('dashboard');
+
+    Route::get('/business/create', [BusinessController::class, 'create']);
+    Route::post('/business', [BusinessController::class, 'store']);
+    Route::get('/business/profile', [BusinessController::class, 'profile']);
+
+    Route::get('/services', [ServiceController::class, 'index']);
+    Route::get('/services/create', [ServiceController::class, 'create']);
+    Route::post('/services', [ServiceController::class, 'store']);
+
+    Route::get('/bookings', [BookingController::class, 'index']);
+    Route::post('/bookings/{id}/reminder', [BookingController::class, 'sendReminder']);
+});
+
+// Profile routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -21,24 +58,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-
-
-Route::get('/services', [ServiceController::class, 'index']);
-Route::get('/services/create', [ServiceController::class, 'create']);
-Route::post('/services', [ServiceController::class, 'store']);
-Route::get('/businesses', [BusinessController::class, 'index']);
-Route::get('/businesses/{business}', [BusinessController::class, 'show']);
-
-Route::middleware('auth')->group(function () {
-    Route::get('/book/{service}', [BookingController::class, 'create']);
-    Route::post('/book', [BookingController::class, 'store']);
-    Route::get('/bookings', [BookingController::class, 'index']);
-    Route::get('/my-bookings', [BookingController::class, 'myBookings']);
-    Route::post('/bookings/{id}/pay', [BookingController::class, 'payDeposit']);
-    Route::post('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
-    Route::post('/bookings/{id}/reminder', [BookingController::class, 'sendReminder']);
-    Route::get('/business/create', [BusinessController::class, 'create']);
-    Route::post('/business', [BusinessController::class, 'store']);
-    Route::get('/business/profile', [BusinessController::class, 'profile']);
-});
