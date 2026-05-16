@@ -34,8 +34,11 @@ class ServiceController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
-            'duration' => ['required', 'integer', 'min:1'],
+            'duration_hours' => ['nullable', 'integer', 'min:0'],
+            'duration_minutes' => ['nullable', 'integer', 'min:0', 'max:59'],
         ]);
+
+        $duration = $this->durationFromRequest($request);
 
         $business = Business::where('user_id', Auth::id())->first();
 
@@ -49,7 +52,7 @@ class ServiceController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'duration' => $request->duration,
+            'duration' => $duration,
             'is_active' => true,
         ]);
 
@@ -71,14 +74,17 @@ class ServiceController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
-            'duration' => ['required', 'integer', 'min:1'],
+            'duration_hours' => ['nullable', 'integer', 'min:0'],
+            'duration_minutes' => ['nullable', 'integer', 'min:0', 'max:59'],
         ]);
+
+        $duration = $this->durationFromRequest($request);
 
         $service->update([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'duration' => $request->duration,
+            'duration' => $duration,
         ]);
 
         return redirect('/services')
@@ -101,5 +107,16 @@ class ServiceController extends Controller
         $business = Business::where('user_id', Auth::id())->firstOrFail();
 
         abort_unless($service->business_id === $business->id, 403);
+    }
+
+    private function durationFromRequest(Request $request): int
+    {
+        $hours = (int) $request->input('duration_hours', 0);
+        $minutes = (int) $request->input('duration_minutes', 0);
+        $duration = ($hours * 60) + $minutes;
+
+        abort_if($duration < 1, 422, 'Duration must be at least 1 minute.');
+
+        return $duration;
     }
 }

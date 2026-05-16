@@ -10,7 +10,7 @@
 <h1>Book {{ $service->name }}</h1>
 
 <p>Price: &pound;{{ $service->price }}</p>
-<p>Duration: {{ $service->duration }} minutes</p>
+<p>Duration: {{ $service->formattedDuration() }}</p>
 <p>Deposit Required: &pound;20</p>
 
 <form method="POST" action="/book">

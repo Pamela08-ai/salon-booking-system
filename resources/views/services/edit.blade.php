@@ -22,8 +22,10 @@
     <label>Price:</label><br>
     <input type="number" name="price" step="0.01" value="{{ old('price', $service->price) }}" required><br><br>
 
-    <label>Duration in minutes:</label><br>
-    <input type="number" name="duration" value="{{ old('duration', $service->duration) }}" required><br><br>
+    <label>Duration:</label><br>
+    <input type="number" name="duration_hours" min="0" value="{{ old('duration_hours', intdiv($service->duration, 60)) }}"> hours
+    <input type="number" name="duration_minutes" min="0" max="59" value="{{ old('duration_minutes', $service->duration % 60) }}"> minutes
+    <br><br>
 
     <button type="submit">Save Changes</button>
 </form>

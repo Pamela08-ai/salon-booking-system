@@ -37,7 +37,7 @@
                 <td>{{ $service->name }}</td>
                 <td>{{ $service->description }}</td>
                 <td>&pound;{{ $service->price }}</td>
-                <td>{{ $service->duration }} minutes</td>
+                <td>{{ $service->formattedDuration() }}</td>
                 <td>
                     @auth
                         @if(Auth::user()->role === 'customer')

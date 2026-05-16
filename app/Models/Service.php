@@ -27,5 +27,21 @@ class Service extends Model
     {
         return $this->hasMany(Booking::class);
     }
-}
 
+    public function formattedDuration(): string
+    {
+        $hours = intdiv($this->duration, 60);
+        $minutes = $this->duration % 60;
+        $parts = [];
+
+        if ($hours > 0) {
+            $parts[] = $hours . ' ' . ($hours === 1 ? 'hour' : 'hours');
+        }
+
+        if ($minutes > 0 || $hours === 0) {
+            $parts[] = $minutes . ' ' . ($minutes === 1 ? 'minute' : 'minutes');
+        }
+
+        return implode(' ', $parts);
+    }
+}

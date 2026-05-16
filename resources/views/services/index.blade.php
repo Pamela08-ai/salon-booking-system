@@ -29,7 +29,7 @@
                 <td>{{ $service->name }}</td>
                 <td>{{ $service->description }}</td>
                 <td>&pound;{{ $service->price }}</td>
-                <td>{{ $service->duration }} minutes</td>
+                <td>{{ $service->formattedDuration() }}</td>
                 <td>{{ $service->is_active ? 'Active' : 'Inactive' }}</td>
                 <td>
                     <a href="/services/{{ $service->id }}/edit">

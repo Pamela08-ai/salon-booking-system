@@ -21,8 +21,10 @@
     <label>Price:</label><br>
     <input type="number" step="0.01" name="price"><br><br>
 
-    <label>Duration (minutes):</label><br>
-    <input type="number" name="duration"><br><br>
+    <label>Duration:</label><br>
+    <input type="number" name="duration_hours" min="0" value="{{ old('duration_hours', 0) }}"> hours
+    <input type="number" name="duration_minutes" min="0" max="59" value="{{ old('duration_minutes', 0) }}"> minutes
+    <br><br>
 
     <button type="submit">Add Service</button>
 </form>
