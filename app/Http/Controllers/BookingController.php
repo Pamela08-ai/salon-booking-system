@@ -18,7 +18,7 @@ class BookingController extends Controller
                 ->with('success', 'Please create a business profile first.');
         }
 
-        $bookings = Booking::with('service')
+        $bookings = Booking::with(['service', 'user'])
             ->whereHas('service', function ($query) use ($business) {
                 $query->where('business_id', $business->id);
             })
@@ -63,7 +63,11 @@ class BookingController extends Controller
     }
     public function sendReminder($id)
     {
-        $booking = Booking::findOrFail($id);
+        $business = \App\Models\Business::where('user_id', Auth::id())->firstOrFail();
+
+        $booking = Booking::whereHas('service', function ($query) use ($business) {
+            $query->where('business_id', $business->id);
+        })->findOrFail($id);
 
         $booking->reminder_sent = true;
 
@@ -168,6 +172,32 @@ class BookingController extends Controller
             ->get();
 
         return view('bookings.my-bookings', compact('bookings'));
+    }
+
+    public function confirm($id)
+    {
+        $business = \App\Models\Business::where('user_id', Auth::id())->firstOrFail();
+
+        $booking = Booking::whereHas('service', function ($query) use ($business) {
+            $query->where('business_id', $business->id);
+        })->findOrFail($id);
+
+        $booking->status = 'confirmed';
+        $booking->save();
+        return back()->with('success', 'Appointment confirmed.');
+    }
+
+    public function complete($id)
+    {
+        $business = \App\Models\Business::where('user_id', Auth::id())->firstOrFail();
+
+        $booking = Booking::whereHas('service', function ($query) use ($business) {
+            $query->where('business_id', $business->id);
+        })->findOrFail($id);
+
+        $booking->status = 'completed';
+        $booking->save();
+        return back()->with('success', 'Appointment marked as completed.');
     }
 
 }
