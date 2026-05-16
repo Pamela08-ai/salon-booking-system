@@ -11,7 +11,7 @@
 
 <p>
     <a href="/">Home</a> |
-    <a href="/services">Book Another Service</a>
+    <a href="/businesses">Book Another Service</a>
 </p>
 @if(session('success'))
     <p style="color: green;">

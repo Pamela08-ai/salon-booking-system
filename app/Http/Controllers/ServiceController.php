@@ -30,6 +30,13 @@ class ServiceController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'duration' => ['required', 'integer', 'min:1'],
+        ]);
+
         $business = Business::where('user_id', Auth::id())->first();
 
         if (!$business) {
@@ -59,6 +66,13 @@ class ServiceController extends Controller
     public function update(Request $request, Service $service)
     {
         $this->ensureServiceBelongsToCurrentBusiness($service);
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'duration' => ['required', 'integer', 'min:1'],
+        ]);
 
         $service->update([
             'name' => $request->name,

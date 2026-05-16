@@ -38,9 +38,10 @@
                     <hr><br>
 
                     <h3>Total Bookings: {{ $totalBookings }}</h3>
-                    <h3>Total Revenue (Deposits): £{{ $totalRevenue }}</h3>
+                    <h3>Total Revenue (Deposits): &pound;{{ $totalRevenue }}</h3>
                     <h3>Pending Bookings: {{ $pendingBookings }}</h3>
                     <h3>Cancelled Bookings: {{ $cancelledBookings }}</h3>
+                    <h3>Completed Bookings: {{ $completedBookings }}</h3>
                     <h3>Unpaid Active Deposits: {{ $totalUnpaidDeposits }}</h3>
                     <h3>Cancellation Rate: {{ $cancellationRate }}%</h3>
 
@@ -90,13 +91,14 @@
                         new Chart(ctx, {
                             type: 'bar',
                             data: {
-                                labels: ['Total', 'Pending', 'Cancelled'],
+                                labels: ['Total', 'Pending', 'Cancelled', 'Completed'],
                                 datasets: [{
                                     label: 'Bookings Overview',
                                     data: [
                                         {{ $totalBookings }},
                                         {{ $pendingBookings }},
-                                        {{ $cancelledBookings }}
+                                        {{ $cancelledBookings }},
+                                        {{ $completedBookings }}
                                     ],
                                     borderWidth: 1
                                 }]

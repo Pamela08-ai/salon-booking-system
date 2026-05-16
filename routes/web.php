@@ -26,12 +26,11 @@ Route::get('/businesses', [BusinessController::class, 'index']);
 Route::get('/businesses/{business}', [BusinessController::class, 'show']);
 
 //Customer booking routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'customer'])->group(function () {
     Route::get('/book/{service}', [BookingController::class, 'create']);
     Route::post('/book', [BookingController::class, 'store']);
     Route::get('/my-bookings', [BookingController::class, 'myBookings']);
     Route::post('/bookings/{id}/pay', [BookingController::class, 'payDeposit']);
-    Route::post('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
 });
 
 //Business owner routes
@@ -54,7 +53,11 @@ Route::middleware(['auth', 'business_owner'])->group(function () {
     Route::post('/bookings/{id}/reminder', [BookingController::class, 'sendReminder']);
 
     Route::post('/bookings/{id}/confirm', [BookingController::class, 'confirm']);
-Route::post('/bookings/{id}/complete', [BookingController::class, 'complete']);
+    Route::post('/bookings/{id}/complete', [BookingController::class, 'complete']);
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
 });
 
 // Profile routes

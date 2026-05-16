@@ -39,9 +39,19 @@
                 <td>&pound;{{ $service->price }}</td>
                 <td>{{ $service->duration }} minutes</td>
                 <td>
-                    <a href="/book/{{ $service->id }}">
-                        <button>Book Service</button>
-                    </a>
+                    @auth
+                        @if(Auth::user()->role === 'customer')
+                            <a href="/book/{{ $service->id }}">
+                                <button>Book Service</button>
+                            </a>
+                        @else
+                            Customer booking only
+                        @endif
+                    @else
+                        <a href="/login">
+                            <button>Login to Book</button>
+                        </a>
+                    @endauth
                 </td>
             </tr>
         @endforeach

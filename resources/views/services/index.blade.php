@@ -20,6 +20,7 @@
             <th>Description</th>
             <th>Price</th>
             <th>Duration</th>
+            <th>Status</th>
             <th>Action</th>
         </tr>
 
@@ -29,6 +30,7 @@
                 <td>{{ $service->description }}</td>
                 <td>&pound;{{ $service->price }}</td>
                 <td>{{ $service->duration }} minutes</td>
+                <td>{{ $service->is_active ? 'Active' : 'Inactive' }}</td>
                 <td>
                     <a href="/services/{{ $service->id }}/edit">
                         <button>Edit Service</button>
@@ -36,11 +38,15 @@
 
                     <br><br>
 
-                    <form method="POST" action="/services/{{ $service->id }}/deactivate">
-                        @csrf
+                    @if($service->is_active)
+                        <form method="POST" action="/services/{{ $service->id }}/deactivate">
+                            @csrf
 
-                        <button type="submit">Deactivate Service</button>
-                    </form>
+                            <button type="submit">Deactivate Service</button>
+                        </form>
+                    @else
+                        Deactivated
+                    @endif
                 </td>
             </tr>
         @endforeach

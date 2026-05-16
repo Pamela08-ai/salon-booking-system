@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use App\Models\Business;
 use App\Models\Service;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,7 +12,7 @@ class BookingController extends Controller
 {
     public function index()
     {
-        $business = \App\Models\Business::where('user_id', Auth::id())->first();
+        $business = Business::where('user_id', Auth::id())->first();
 
         if (!$business) {
             return redirect('/business/create')
@@ -29,33 +30,45 @@ class BookingController extends Controller
 
     public function create(Service $service)
     {
+        abort_unless($service->is_active, 404);
+
         return view('bookings.create', compact('service'));
     }
 
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'service_id' => ['required', 'exists:services,id'],
+            'booking_date' => ['required', 'date'],
+            'booking_time' => ['required'],
+            'staff_name' => ['required', 'string', 'max:255'],
+        ]);
+
+        $service = Service::with('business')
+            ->where('is_active', true)
+            ->findOrFail($validated['service_id']);
+
         Booking::create([
             'user_id' => Auth::id(),
-            'service_id' => $request->service_id,
-            'booking_date' => $request->booking_date,
-            'booking_time' => $request->booking_time,
+            'service_id' => $service->id,
+            'booking_date' => $validated['booking_date'],
+            'booking_time' => $validated['booking_time'],
             'status' => 'pending',
             'deposit_amount' => 20,
             'deposit_paid' => false,
-            'staff_name' => $request->staff_name,
+            'staff_name' => $validated['staff_name'],
         ]);
 
-        $businessName = Service::find($request->service_id)
-            ->business
-            ->business_name;
-
         return redirect('/my-bookings')
-            ->with('success', 'Appointment booked successfully with ' . $businessName . '.');
+            ->with('success', 'Appointment booked successfully with ' . $service->business->business_name . '.');
     }
 
     public function payDeposit($id)
     {
-        $booking = Booking::findOrFail($id);
+        $booking = Booking::where('user_id', Auth::id())->findOrFail($id);
+
+        abort_if($booking->status === 'cancelled', 403);
+
         $booking->deposit_paid = true;
         $booking->save();
 
@@ -63,7 +76,7 @@ class BookingController extends Controller
     }
     public function sendReminder($id)
     {
-        $business = \App\Models\Business::where('user_id', Auth::id())->firstOrFail();
+        $business = Business::where('user_id', Auth::id())->firstOrFail();
 
         $booking = Booking::whereHas('service', function ($query) use ($business) {
             $query->where('business_id', $business->id);
@@ -78,7 +91,8 @@ class BookingController extends Controller
 
     public function cancel($id)
     {
-        $booking = Booking::findOrFail($id);
+        $booking = $this->findBookingForCurrentUser($id);
+
         $booking->status = 'cancelled';
         $booking->save();
 
@@ -87,7 +101,7 @@ class BookingController extends Controller
 
     public function dashboard()
     {
-        $business = \App\Models\Business::where('user_id', Auth::id())->first();
+        $business = Business::where('user_id', Auth::id())->first();
 
         if (!$business) {
             return view('dashboard', [
@@ -96,6 +110,7 @@ class BookingController extends Controller
                 'totalRevenue' => 0,
                 'pendingBookings' => 0,
                 'cancelledBookings' => 0,
+                'completedBookings' => 0,
                 'popularService' => null,
                 'totalUnpaidDeposits' => 0,
                 'mostBookedStaff' => null,
@@ -118,6 +133,11 @@ class BookingController extends Controller
             })->count();
 
         $cancelledBookings = Booking::where('status', 'cancelled')
+            ->whereHas('service', function ($query) use ($business) {
+                $query->where('business_id', $business->id);
+            })->count();
+
+        $completedBookings = Booking::where('status', 'completed')
             ->whereHas('service', function ($query) use ($business) {
                 $query->where('business_id', $business->id);
             })->count();
@@ -159,6 +179,7 @@ class BookingController extends Controller
             'totalRevenue',
             'pendingBookings',
             'cancelledBookings',
+            'completedBookings',
             'popularService',
             'totalUnpaidDeposits',
             'mostBookedStaff',
@@ -167,7 +188,7 @@ class BookingController extends Controller
     }
     public function myBookings()
     {
-        $bookings = Booking::with('service')
+        $bookings = Booking::with('service.business')
             ->where('user_id', Auth::id())
             ->get();
 
@@ -176,7 +197,7 @@ class BookingController extends Controller
 
     public function confirm($id)
     {
-        $business = \App\Models\Business::where('user_id', Auth::id())->firstOrFail();
+        $business = Business::where('user_id', Auth::id())->firstOrFail();
 
         $booking = Booking::whereHas('service', function ($query) use ($business) {
             $query->where('business_id', $business->id);
@@ -189,7 +210,7 @@ class BookingController extends Controller
 
     public function complete($id)
     {
-        $business = \App\Models\Business::where('user_id', Auth::id())->firstOrFail();
+        $business = Business::where('user_id', Auth::id())->firstOrFail();
 
         $booking = Booking::whereHas('service', function ($query) use ($business) {
             $query->where('business_id', $business->id);
@@ -200,4 +221,20 @@ class BookingController extends Controller
         return back()->with('success', 'Appointment marked as completed.');
     }
 
+    private function findBookingForCurrentUser($id): Booking
+    {
+        if (Auth::user()->role === 'customer') {
+            return Booking::where('user_id', Auth::id())->findOrFail($id);
+        }
+
+        if (Auth::user()->role === 'business_owner') {
+            $business = Business::where('user_id', Auth::id())->firstOrFail();
+
+            return Booking::whereHas('service', function ($query) use ($business) {
+                $query->where('business_id', $business->id);
+            })->findOrFail($id);
+        }
+
+        abort(403);
+    }
 }

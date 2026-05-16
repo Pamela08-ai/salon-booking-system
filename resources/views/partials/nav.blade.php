@@ -1,8 +1,4 @@
 <nav style="padding: 15px; border-bottom: 1px solid #ccc; margin-bottom: 20px;">
-    @auth
-        <p>Current role: {{ Auth::user()->role }}</p>
-    @endauth
-
     <strong>Bookira</strong>
     <a href="/">Home</a>
 

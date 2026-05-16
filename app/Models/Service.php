@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Booking;
+use App\Models\Business;
 
 class Service extends Model
 {
@@ -20,6 +22,10 @@ class Service extends Model
     {
         return $this->belongsTo(Business::class);
     }
-}
 
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+}
 

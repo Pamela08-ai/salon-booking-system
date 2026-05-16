@@ -15,7 +15,18 @@ class BusinessController extends Controller
 
     public function store(Request $request)
     {
-        $business = Business::create([
+        $request->validate([
+            'business_name' => ['required', 'string', 'max:255'],
+            'location' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        if (Business::where('user_id', Auth::id())->exists()) {
+            return redirect('/business/profile')
+                ->with('success', 'You already have a business profile.');
+        }
+
+        Business::create([
             'user_id' => Auth::id(),
             'business_name' => $request->business_name,
             'location' => $request->location,

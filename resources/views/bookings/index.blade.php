@@ -75,14 +75,7 @@
                 <td>
                     @if($booking->status !== 'cancelled')
 
-                        @if(!$booking->deposit_paid)
-                            <form method="POST" action="{{ url('/bookings/' . $booking->id . '/pay') }}">
-                                @csrf
-                                <button type="submit">Pay Deposit</button>
-                            </form>
-                        @else
-                            Paid
-                        @endif
+                        Deposit {{ $booking->deposit_paid ? 'paid' : 'not paid' }}
 
                         <br>
 

@@ -35,7 +35,7 @@
 </form>
 
 <br>
-<a href="/services">Back to Services</a>
+<a href="/businesses/{{ $service->business_id }}">Back to Business</a>
 
 </body>
 </html>

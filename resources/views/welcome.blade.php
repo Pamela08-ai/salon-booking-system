@@ -2,6 +2,17 @@
 <html>
 <head>
     <title>Bookira</title>
+    <style>
+        .button-link {
+            display: inline-block;
+            padding: 8px 12px;
+            border: 1px solid #333;
+            border-radius: 3px;
+            background: #f2f2f2;
+            color: #111;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -21,9 +32,7 @@
         Browse salon businesses and book appointments.
     </p>
 
-    <a href="/businesses">
-        <button>Book Appointment</button>
-    </a>
+    <a class="button-link" href="/businesses">Book Appointment</a>
 
     <br><br><hr><br>
 
@@ -35,33 +44,33 @@
 
     @guest
 
-    <a href="/register">
-        <button>Register Your Business</button>
-    </a>
+    <a class="button-link" href="/register">Register Your Business</a>
 
     <br><br>
 
-    <a href="/login">
-        <button>Business Owner Login</button>
-    </a>
+    <a class="button-link" href="/login">Business Owner Login</a>
 
 @else
 
-    <a href="/business/create">
-        <button>Create Business Profile</button>
-    </a>
+    @if(Auth::user()->role === 'business_owner')
 
-    <br><br>
+        <a class="button-link" href="/business/create">Create Business Profile</a>
 
-    <a href="/business/profile">
-        <button>My Business Profile</button>
-    </a>
+        <br><br>
 
-    <br><br>
+        <a class="button-link" href="/business/profile">My Business Profile</a>
 
-    <a href="/dashboard">
-        <button>Business Dashboard</button>
-    </a>
+        <br><br>
+
+        <a class="button-link" href="/dashboard">Business Dashboard</a>
+
+    @else
+
+        <p>
+            Business tools are available when you sign in as a business owner.
+        </p>
+
+    @endif
 
 @endguest
 
