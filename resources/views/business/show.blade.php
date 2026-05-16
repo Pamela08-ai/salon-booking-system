@@ -36,7 +36,7 @@
             <tr>
                 <td>{{ $service->name }}</td>
                 <td>{{ $service->description }}</td>
-                <td>£{{ $service->price }}</td>
+                <td>&pound;{{ $service->price }}</td>
                 <td>{{ $service->duration }} minutes</td>
                 <td>
                     <a href="/book/{{ $service->id }}">
@@ -49,18 +49,6 @@
 @else
     <p>This business has not added any services yet.</p>
 @endif
-
-<p>
-    Services for this business will appear here.
-</p>
-
-<br>
-
-<a href="/services">
-    <button>View Services</button>
-</a>
-
-<br><br>
 
 <a href="/businesses">
     Back to Businesses

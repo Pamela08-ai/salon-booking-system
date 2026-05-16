@@ -46,8 +46,15 @@ Route::middleware(['auth', 'business_owner'])->group(function () {
     Route::get('/services/create', [ServiceController::class, 'create']);
     Route::post('/services', [ServiceController::class, 'store']);
 
+    Route::get('/services/{service}/edit', [ServiceController::class, 'edit']);
+    Route::put('/services/{service}', [ServiceController::class, 'update']);
+    Route::post('/services/{service}/deactivate', [ServiceController::class, 'deactivate']);
+
     Route::get('/bookings', [BookingController::class, 'index']);
     Route::post('/bookings/{id}/reminder', [BookingController::class, 'sendReminder']);
+
+    Route::post('/bookings/{id}/confirm', [BookingController::class, 'confirm']);
+Route::post('/bookings/{id}/complete', [BookingController::class, 'complete']);
 });
 
 // Profile routes

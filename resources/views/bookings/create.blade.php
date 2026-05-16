@@ -9,9 +9,9 @@
 
 <h1>Book {{ $service->name }}</h1>
 
-<p>Price: £{{ $service->price }}</p>
+<p>Price: &pound;{{ $service->price }}</p>
 <p>Duration: {{ $service->duration }} minutes</p>
-<p>Deposit Required: £20</p>
+<p>Deposit Required: &pound;20</p>
 
 <form method="POST" action="/book">
     @csrf

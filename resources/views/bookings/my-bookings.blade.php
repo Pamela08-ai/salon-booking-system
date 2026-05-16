@@ -30,7 +30,6 @@
             <th>Status</th>
             <th>Deposit Status</th>
             <th>Reminder Status</th>
-            <th>Reminder Action</th>
             <th>Deposit Action</th>
             <th>Booking Action</th>
         </tr>
@@ -42,22 +41,28 @@
                 <td>{{ $booking->booking_date }}</td>
                 <td>{{ $booking->booking_time }}</td>
                 <td>{{ $booking->staff_name }}</td>
-                <td>{{ $booking->status }}</td>
+                <td>
+                    @if($booking->status === 'pending')
+                        <span style="color: orange;">Pending</span>
+                    @endif
+
+                    @if($booking->status === 'confirmed')
+                        <span style="color: blue;">Confirmed</span>
+                    @endif
+
+                    @if($booking->status === 'completed')
+                        <span style="color: green;">Completed</span>
+                    @endif
+
+                    @if($booking->status === 'cancelled')
+                        <span style="color: red;">Cancelled</span>
+                    @endif
+                </td>
+                
                 <td>{{ $booking->deposit_paid ? 'Paid' : 'Not Paid' }}</td>
 
                 <td>
                     {{ $booking->reminder_sent ? 'Sent' : 'Not Sent' }}
-                </td>
-
-                <td>
-                    @if(!$booking->reminder_sent && $booking->status !== 'cancelled')
-                        <form method="POST" action="{{ url('/bookings/' . $booking->id . '/reminder') }}">
-                            @csrf
-                            <button type="submit">Send Reminder</button>
-                        </form>
-                    @else
-                        Not available
-                    @endif
                 </td>
 
                 <td>

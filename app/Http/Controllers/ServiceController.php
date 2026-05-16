@@ -49,4 +49,43 @@ class ServiceController extends Controller
         return redirect('/business/profile')
             ->with('success', 'Service added to your business successfully.');
     }
+    public function edit(Service $service)
+    {
+        $this->ensureServiceBelongsToCurrentBusiness($service);
+
+        return view('services.edit', compact('service'));
+    }
+
+    public function update(Request $request, Service $service)
+    {
+        $this->ensureServiceBelongsToCurrentBusiness($service);
+
+        $service->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'duration' => $request->duration,
+        ]);
+
+        return redirect('/services')
+            ->with('success', 'Service updated successfully.');
+    }
+
+    public function deactivate(Service $service)
+    {
+        $this->ensureServiceBelongsToCurrentBusiness($service);
+
+        $service->is_active = false;
+        $service->save();
+
+        return redirect('/services')
+            ->with('success', 'Service deactivated successfully.');
+    }
+
+    private function ensureServiceBelongsToCurrentBusiness(Service $service): void
+    {
+        $business = Business::where('user_id', Auth::id())->firstOrFail();
+
+        abort_unless($service->business_id === $business->id, 403);
+    }
 }

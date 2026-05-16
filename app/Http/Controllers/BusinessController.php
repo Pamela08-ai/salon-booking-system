@@ -42,7 +42,9 @@ class BusinessController extends Controller
 
     public function show(Business $business)
     {
-        $services = $business->services;
+        $services = $business->services()
+            ->where('is_active', true)
+            ->get();
 
         return view('business.show', compact('business', 'services'));
     }

@@ -5,7 +5,9 @@
 </head>
 <body>
 
-<h1>Salon Services</h1>
+@include('partials.nav')
+
+<h1>Manage Services</h1>
 
 <a href="/services/create">Add New Service</a>
 
@@ -25,10 +27,20 @@
             <tr>
                 <td>{{ $service->name }}</td>
                 <td>{{ $service->description }}</td>
-                <td>£{{ $service->price }}</td>
+                <td>&pound;{{ $service->price }}</td>
                 <td>{{ $service->duration }} minutes</td>
                 <td>
-                    <a href="/book/{{ $service->id }}">Book</a>
+                    <a href="/services/{{ $service->id }}/edit">
+                        <button>Edit Service</button>
+                    </a>
+
+                    <br><br>
+
+                    <form method="POST" action="/services/{{ $service->id }}/deactivate">
+                        @csrf
+
+                        <button type="submit">Deactivate Service</button>
+                    </form>
                 </td>
             </tr>
         @endforeach
