@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Business Profile</title>
+    <title>Edit Business Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -18,11 +18,11 @@
                 <div class="card-body p-5">
 
                     <h1 class="display-6 fw-bold mb-2">
-                        Create Your Business Profile
+                        Edit Business Profile
                     </h1>
 
                     <p class="text-muted mb-4">
-                        Set up your salon or beauty business so customers can discover and book your services.
+                        Update your business details and opening hours.
                     </p>
 
                     @if($errors->any())
@@ -37,6 +37,7 @@
 
                     <form method="POST" action="/business">
                         @csrf
+                        @method('PUT')
 
                         <div class="mb-4">
                             <label class="form-label fw-semibold">
@@ -47,7 +48,7 @@
                                 type="text"
                                 name="business_name"
                                 class="form-control rounded-4"
-                                value="{{ old('business_name') }}"
+                                value="{{ old('business_name', $business->business_name) }}"
                                 required
                             >
                         </div>
@@ -61,7 +62,8 @@
                                 type="text"
                                 name="location"
                                 class="form-control rounded-4"
-                                value="{{ old('location') }}"
+                                value="{{ old('location', $business->location) }}"
+                                required
                             >
                         </div>
 
@@ -74,7 +76,7 @@
                                 name="description"
                                 rows="5"
                                 class="form-control rounded-4"
-                            >{{ old('description') }}</textarea>
+                            >{{ old('description', $business->description) }}</textarea>
                         </div>
 
                         <div class="row">
@@ -87,7 +89,7 @@
                                     type="time"
                                     name="opening_time"
                                     class="form-control rounded-4"
-                                    value="{{ old('opening_time') }}"
+                                    value="{{ old('opening_time', $business->opening_time ? substr($business->opening_time, 0, 5) : '') }}"
                                 >
                             </div>
 
@@ -100,16 +102,19 @@
                                     type="time"
                                     name="closing_time"
                                     class="form-control rounded-4"
-                                    value="{{ old('closing_time') }}"
+                                    value="{{ old('closing_time', $business->closing_time ? substr($business->closing_time, 0, 5) : '') }}"
                                 >
                             </div>
                         </div>
 
-                        <div class="d-grid">
-                            <button type="submit"
-                                    class="btn btn-dark btn-lg rounded-pill">
-                                Save Business Profile
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-dark btn-lg rounded-pill px-4">
+                                Save Changes
                             </button>
+
+                            <a href="/business/profile" class="btn btn-outline-dark btn-lg rounded-pill px-4">
+                                Cancel
+                            </a>
                         </div>
 
                     </form>

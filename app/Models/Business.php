@@ -13,6 +13,8 @@ class Business extends Model
         'business_name',
         'location',
         'description',
+        'opening_time',
+        'closing_time',
     ];
 
     public function services()

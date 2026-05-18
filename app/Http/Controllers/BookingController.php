@@ -40,13 +40,29 @@ class BookingController extends Controller
         $validated = $request->validate([
             'service_id' => ['required', 'exists:services,id'],
             'booking_date' => ['required', 'date'],
-            'booking_time' => ['required'],
+            'booking_time' => ['required', 'date_format:H:i'],
             'staff_name' => ['required', 'string', 'max:255'],
         ]);
 
         $service = Service::with('business')
             ->where('is_active', true)
             ->findOrFail($validated['service_id']);
+
+        $business = $service->business;
+
+        if ($business->opening_time && $business->closing_time) {
+            $bookingTime = $validated['booking_time'];
+            $openingTime = substr($business->opening_time, 0, 5);
+            $closingTime = substr($business->closing_time, 0, 5);
+
+            if ($bookingTime < $openingTime || $bookingTime > $closingTime) {
+                return back()
+                    ->withErrors([
+                        'booking_time' => 'Please choose a time between ' . $openingTime . ' and ' . $closingTime . '.',
+                    ])
+                    ->withInput();
+            }
+        }
 
         Booking::create([
             'user_id' => Auth::id(),

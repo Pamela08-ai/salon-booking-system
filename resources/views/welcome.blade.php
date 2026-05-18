@@ -2,96 +2,58 @@
 <html>
 <head>
     <title>Bookira</title>
-    <style>
-        .button-link {
-            display: inline-block;
-            padding: 8px 12px;
-            border: 1px solid #333;
-            border-radius: 3px;
-            background: #f2f2f2;
-            color: #111;
-            text-decoration: none;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+
+<body style="background: linear-gradient(135deg, #eee8ff, #ffe6f7, #ffffff); min-height: 100vh;">
 
 @include('partials.nav')
 
-    <h1>Welcome to Bookira</h1>
+<section class="container py-5">
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <h1 class="display-4 fw-bold mb-3">
+                Book local salon and beauty services
+            </h1>
 
-    <p>
-        Smart salon booking and business management platform.
-    </p>
+            <p class="lead mb-4">
+                Discover salons, manage appointments, and support small beauty businesses with smarter booking tools.
+            </p>
 
-    <hr><br>
+            <div class="card border-0 shadow-lg rounded-5 p-4" style="max-width: 650px;">
+                <div class="d-grid gap-3">
+                    <a href="/businesses" class="btn btn-dark btn-lg rounded-pill">
+                        Book Appointment
+                    </a>
 
-    <h2>Customer Portal</h2>
+                    @guest
+                        <a href="/register" class="btn btn-outline-dark btn-lg rounded-pill">
+                            Register Your Business
+                        </a>
 
-    <p>
-        Browse salon businesses and book appointments.
-    </p>
+                        <a href="/login" class="btn btn-light btn-lg rounded-pill border">
+                            Login
+                        </a>
+                    @else
+                        @if(Auth::user()->role === 'business_owner')
+                            <a href="/business/profile" class="btn btn-outline-dark btn-lg rounded-pill">
+                                Go to My Business
+                            </a>
 
-    <a class="button-link" href="/businesses">Book Appointment</a>
-
-    <br><br><hr><br>
-
-    <h2>Business Owner Portal</h2>
-
-    <p>
-        Manage your salon business, services, and bookings.
-    </p>
-
-    @guest
-
-    <a class="button-link" href="/register">Register Your Business</a>
-
-    <br><br>
-
-    <a class="button-link" href="/login">Business Owner Login</a>
-
-@else
-
-    @if(Auth::user()->role === 'business_owner')
-
-        <a class="button-link" href="/business/create">Create Business Profile</a>
-
-        <br><br>
-
-        <a class="button-link" href="/business/profile">My Business Profile</a>
-
-        <br><br>
-
-        <a class="button-link" href="/dashboard">Business Dashboard</a>
-
-    @else
-
-        <p>
-            Business tools are available when you sign in as a business owner.
-        </p>
-
-    @endif
-
-@endguest
-
-    <br><br><hr><br>
-
-    @guest
-
-        <a href="/login">Login</a> |
-        <a href="/register">Register</a>
-
-    @else
-
-        <p>
-            Logged in as {{ Auth::user()->name }}
-        </p>
-
-        <a href="/my-bookings">
-            My Bookings
-        </a>
-
-    @endguest
+                            <a href="/dashboard" class="btn btn-light btn-lg rounded-pill border">
+                                View Dashboard
+                            </a>
+                        @else
+                            <a href="/my-bookings" class="btn btn-outline-dark btn-lg rounded-pill">
+                                My Appointments
+                            </a>
+                        @endif
+                    @endguest
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 </body>
 </html>

@@ -40,6 +40,8 @@ Route::middleware(['auth', 'business_owner'])->group(function () {
     Route::get('/business/create', [BusinessController::class, 'create']);
     Route::post('/business', [BusinessController::class, 'store']);
     Route::get('/business/profile', [BusinessController::class, 'profile']);
+    Route::get('/business/edit', [BusinessController::class, 'edit']);
+    Route::put('/business', [BusinessController::class, 'update']);
 
     Route::get('/services', [ServiceController::class, 'index']);
     Route::get('/services/create', [ServiceController::class, 'create']);
