@@ -11,6 +11,7 @@ class CustomerMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Only customers should access the booking pages.
         if (!Auth::check() || Auth::user()->role !== 'customer') {
             return redirect('/');
         }

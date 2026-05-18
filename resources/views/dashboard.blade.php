@@ -179,6 +179,51 @@
 
         </div>
 
+        @if($decisionSupport)
+            <div class="card border-0 shadow-sm rounded-4 mt-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                        <div>
+                            <h2 class="h4 fw-bold mb-1">AI-Enhanced Decision Support</h2>
+                            <p class="text-muted mb-0">
+                                Rule-based predictive insights generated from booking and deposit data.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <p class="text-muted mb-1">Forecast Next Week</p>
+                            <h3 class="fw-bold">{{ $decisionSupport['forecast_next_week'] }} bookings</h3>
+                        </div>
+
+                        <div class="col-md-3">
+                            <p class="text-muted mb-1">Demand Level</p>
+                            <h3 class="fw-bold">{{ $decisionSupport['demand_level'] }}</h3>
+                        </div>
+
+                        <div class="col-md-3">
+                            <p class="text-muted mb-1">Risk Level</p>
+                            <h3 class="fw-bold">{{ $decisionSupport['risk_level'] }}</h3>
+                        </div>
+
+                        <div class="col-md-3">
+                            <p class="text-muted mb-1">Busiest Day</p>
+                            <h3 class="fw-bold">{{ $decisionSupport['busiest_day'] ?? 'Not enough data' }}</h3>
+                        </div>
+                    </div>
+
+                    <h3 class="h5 fw-bold mb-3">Recommended Actions</h3>
+
+                    <ul class="mb-0">
+                        @foreach($decisionSupport['recommendations'] as $recommendation)
+                            <li class="mb-2">{{ $recommendation }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        @endif
+
         <script>
             const ctx = document.getElementById('bookingChart').getContext('2d');
 

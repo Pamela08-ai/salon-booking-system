@@ -11,7 +11,7 @@ class BusinessOwnerMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        //if the user is not a business owner it sends them to the homepage
+        // Only business owners should access the management pages.
         if (!Auth::check() || Auth::user()->role !== 'business_owner') {
 
             return redirect('/');

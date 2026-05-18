@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Business;
 use App\Models\Service;
+use App\Services\DecisionSupportService;
 use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
@@ -50,6 +51,7 @@ class BookingController extends Controller
 
         $business = $service->business;
 
+        // Stop customers from booking before the salon opens or after it closes.
         if ($business->opening_time && $business->closing_time) {
             $bookingTime = $validated['booking_time'];
             $openingTime = substr($business->opening_time, 0, 5);
@@ -115,7 +117,7 @@ class BookingController extends Controller
         return back()->with('success', 'Booking cancelled successfully.');
     }
 
-    public function dashboard()
+    public function dashboard(DecisionSupportService $decisionSupportService)
     {
         $business = Business::where('user_id', Auth::id())->first();
 
@@ -131,6 +133,7 @@ class BookingController extends Controller
                 'totalUnpaidDeposits' => 0,
                 'mostBookedStaff' => null,
                 'cancellationRate' => 0,
+                'decisionSupport' => null,
             ]);
         }
 
@@ -189,6 +192,8 @@ class BookingController extends Controller
             ? round(($cancelledBookings / $totalBookings) * 100, 1)
             : 0;
 
+        $decisionSupport = $decisionSupportService->analyse($business);
+
         return view('dashboard', compact(
             'business',
             'totalBookings',
@@ -199,7 +204,8 @@ class BookingController extends Controller
             'popularService',
             'totalUnpaidDeposits',
             'mostBookedStaff',
-            'cancellationRate'
+            'cancellationRate',
+            'decisionSupport'
         ));
     }
     public function myBookings()
@@ -239,10 +245,12 @@ class BookingController extends Controller
 
     private function findBookingForCurrentUser($id): Booking
     {
+        // Customers can only cancel their own bookings.
         if (Auth::user()->role === 'customer') {
             return Booking::where('user_id', Auth::id())->findOrFail($id);
         }
 
+        // Business owners can only cancel bookings connected to their own business.
         if (Auth::user()->role === 'business_owner') {
             $business = Business::where('user_id', Auth::id())->firstOrFail();
 
