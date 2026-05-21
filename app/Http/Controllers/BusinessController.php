@@ -15,6 +15,7 @@ class BusinessController extends Controller
 
     public function store(Request $request)
     {
+        // Business owners only need one business profile for this project.
         $request->validate([
             'business_name' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string', 'max:255'],
@@ -88,6 +89,7 @@ class BusinessController extends Controller
     {
         $search = $request->input('search');
 
+        // Search is kept simple: it checks business details and active service details.
         $businesses = Business::query()
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
@@ -111,6 +113,7 @@ class BusinessController extends Controller
 
     public function show(Business $business)
     {
+        // Customers should only see active services on the public business page.
         $services = $business->services()
             ->where('is_active', true)
             ->get();

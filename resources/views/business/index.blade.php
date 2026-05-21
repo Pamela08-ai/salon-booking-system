@@ -10,6 +10,7 @@
 @include('partials.nav')
 
 <div class="container py-5">
+    {{-- Customers and guests use this search to find salons by name, location, or service. --}}
     <form method="GET" action="/businesses" class="mb-5">
         <div class="row g-2">
             <div class="col-md-9">
@@ -40,6 +41,7 @@
 
     @if($businesses->count() > 0)
 
+        {{-- Each card links to the public business page where active services are shown. --}}
         <div class="row g-4">
             @foreach($businesses as $business)
                 <div class="col-md-6 col-lg-4">

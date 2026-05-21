@@ -22,6 +22,7 @@
                     </h1>
 
                     <div class="mb-4">
+                        {{-- Opening hours are shown here so customers know what times are allowed. --}}
                         <p class="mb-1"><strong>Price:</strong> &pound;{{ $service->price }}</p>
                         <p class="mb-1"><strong>Duration:</strong> {{ $service->formattedDuration() }}</p>
                         <p class="mb-1">
@@ -48,6 +49,7 @@
                     <form method="POST" action="/book">
                         @csrf
 
+                        {{-- The controller uses this service id to connect the booking to the correct business. --}}
                         <input type="hidden" name="service_id" value="{{ $service->id }}">
 
                         <div class="mb-4">

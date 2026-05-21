@@ -32,6 +32,7 @@
 
         <div class="card border-0 shadow-sm rounded-4">
             <div class="card-body p-0">
+                {{-- This is the owner's service management table, not the customer booking page. --}}
                 <table class="table align-middle mb-0">
                     <thead class="table-light">
                         <tr>
@@ -66,6 +67,7 @@
                                     </a>
 
                                     @if($service->is_active)
+                                        {{-- Deactivating keeps the service history and old bookings safe. --}}
                                         <form method="POST" action="/services/{{ $service->id }}/deactivate" class="d-inline">
                                             @csrf
 

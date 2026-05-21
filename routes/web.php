@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     if (Auth::check()) {
+        // Send users to the correct starting page based on the role they registered with.
         if (Auth::user()->role === 'business_owner') {
             return redirect('/business/profile');
         }
@@ -21,11 +22,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-//Public customer browsing
+// Public pages can be viewed before logging in, so guests can explore salons first.
 Route::get('/businesses', [BusinessController::class, 'index']);
 Route::get('/businesses/{business}', [BusinessController::class, 'show']);
 
-//Customer booking routes
+// These routes are only for customers because business owners should not book as customers.
 Route::middleware(['auth', 'customer'])->group(function () {
     Route::get('/book/{service}', [BookingController::class, 'create']);
     Route::post('/book', [BookingController::class, 'store']);
@@ -33,7 +34,7 @@ Route::middleware(['auth', 'customer'])->group(function () {
     Route::post('/bookings/{id}/pay', [BookingController::class, 'payDeposit']);
 });
 
-//Business owner routes
+// Business owners use these pages to manage their business, services, bookings, and dashboard.
 Route::middleware(['auth', 'business_owner'])->group(function () {
     Route::get('/dashboard', [BookingController::class, 'dashboard'])->name('dashboard');
 
@@ -59,6 +60,7 @@ Route::middleware(['auth', 'business_owner'])->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    // Both customers and business owners can cancel, but the controller checks ownership first.
     Route::post('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
 });
 

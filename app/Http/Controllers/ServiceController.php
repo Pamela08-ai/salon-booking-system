@@ -30,6 +30,7 @@ class ServiceController extends Controller
 
     public function store(Request $request)
     {
+        // The form takes hours and minutes, then the controller stores the total minutes.
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
@@ -95,6 +96,7 @@ class ServiceController extends Controller
     {
         $this->ensureServiceBelongsToCurrentBusiness($service);
 
+        // Services are deactivated instead of deleted so old bookings still make sense.
         $service->is_active = false;
         $service->save();
 
@@ -106,11 +108,13 @@ class ServiceController extends Controller
     {
         $business = Business::where('user_id', Auth::id())->firstOrFail();
 
+        // This stops one business owner editing another owner's services.
         abort_unless($service->business_id === $business->id, 403);
     }
 
     private function durationFromRequest(Request $request): int
     {
+        // Convert the separate duration fields into the single minutes value used in the database.
         $hours = (int) $request->input('duration_hours', 0);
         $minutes = (int) $request->input('duration_minutes', 0);
         $duration = ($hours * 60) + $minutes;

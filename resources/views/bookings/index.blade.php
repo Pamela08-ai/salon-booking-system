@@ -38,6 +38,7 @@
         <div class="card border-0 shadow-sm rounded-4">
             <div class="card-body p-0">
 
+                {{-- Business owners only see bookings connected to their own services. --}}
                 <table class="table align-middle mb-0">
                     <thead class="table-light">
                         <tr>
@@ -150,6 +151,7 @@
 
                                     @if($booking->status !== 'cancelled')
 
+                                        {{-- Reminders are simulated, so this just marks the reminder as sent. --}}
                                         @if(!$booking->reminder_sent)
 
                                             <form method="POST" action="{{ url('/bookings/' . $booking->id . '/reminder') }}" class="mb-2">

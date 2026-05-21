@@ -19,11 +19,13 @@ class Business extends Model
 
     public function services()
     {
+        // Each business can offer many services.
         return $this->hasMany(Service::class);
     }
 
     public function user()
     {
+        // The business belongs to the owner who created it.
         return $this->belongsTo(User::class);
     }
 }

@@ -52,11 +52,13 @@ class User extends Authenticatable
 
     public function business()
     {
+        // A business owner has one business profile.
         return $this->hasOne(Business::class);
     }
 
     public function bookings()
     {
+        // Customer bookings are connected back to the user who made them.
         return $this->hasMany(Booking::class);
     }
 }

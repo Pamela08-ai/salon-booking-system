@@ -20,16 +20,19 @@ class Service extends Model
 
     public function business()
     {
+        // Services belong to a business, which links bookings back to the owner.
         return $this->belongsTo(Business::class);
     }
 
     public function bookings()
     {
+        // Old bookings stay linked even if the service is later deactivated.
         return $this->hasMany(Booking::class);
     }
 
     public function formattedDuration(): string
     {
+        // Show service length in a nicer way, for example 90 minutes becomes 1 hour 30 minutes.
         $hours = intdiv($this->duration, 60);
         $minutes = $this->duration % 60;
         $parts = [];

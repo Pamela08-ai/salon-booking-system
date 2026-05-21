@@ -23,11 +23,13 @@ class Booking extends Model
 
     public function service()
     {
+        // The service tells us which business this appointment belongs to.
         return $this->belongsTo(Service::class);
     }
 
     public function user()
     {
+        // The user is the customer who made the booking.
         return $this->belongsTo(User::class);
     }
 }
